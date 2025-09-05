@@ -58,19 +58,6 @@ class MultiHeadAttention(nn.Module):
         # 计算注意力
         attn_output, attn_weights = self.scaled_dot_product_attention(Q, K, V, mask)
         
-        print(f"Inside MultiHeadAttention forward:")
-        print(f"  - self.d_model: {self.d_model}")
-        print(f"  - self.num_heads: {self.num_heads}")
-        print(f"  - self.d_k: {self.d_k}")
-        print(f"  - attn_output shape before transpose: {attn_output.shape}")
-        
-        transposed_output = attn_output.transpose(1, 2).contiguous()
-        print(f"  - attn_output shape after transpose: {transposed_output.shape}")
-        print(f"  - Total elements in transposed_output: {transposed_output.numel()}")
-        
-        target_shape = (batch_size, q.size(1), self.d_model)
-        print(f"  - Target view shape: {target_shape}")
-        print(f"  - Expected elements for target shape: {batch_size * q.size(1) * self.d_model}")
         # 连接多头并通过输出层
         attn_output = attn_output.transpose(1, 2).contiguous().view(batch_size, seq_len_q, self.d_model)  # [batch_size, seq_len_q, d_model]
         output = self.W_o(attn_output)  # [batch_size, seq_len_q, d_model]
